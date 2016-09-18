@@ -12,8 +12,8 @@ $('#go').click(function(){
 	];
 
 	// Construct a file
-	var file = new File(parts, 'paste.txt', {
-	    type: "text/plain"
+	var file = new File(parts, 'paste.md', {
+	    type: "text/markdown"
 	});
 
 	var fr = new FileReader();
@@ -43,10 +43,11 @@ $('#download').click(function(){
 	client.add(uri, function (torrent) {
 	  // Torrents can contain many files. Let's use the first.
 	  var file = torrent.files[0];
-	  var markdownHTML = "";
-	  // Display the file by adding it to the DOM.
-	  // Supports video, audio, image files, and more!
-	  file.appendTo('#downloadOutput');
+	  // Render text to markdown, then send to DOM
+	  file.getBuffer(function (err, buffer) {
+		  if (err) throw err
+		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+	  });
 	});
 });
 
