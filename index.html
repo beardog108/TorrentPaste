@@ -1,0 +1,71 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>TorrentPaste</title>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+		<link rel='stylesheet' href='theme.css'>
+		<script src='https://cdn.jsdelivr.net/webtorrent/latest/webtorrent.min.js'></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js" integrity="sha384-rY/jv8mMhqDabXSo+UCggqKtdmBfd3qC2/KvyTDNQ6PcUJXaxK1tMepoQda4g5vB" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+		<script src='bs-growl.min.js'></script>
+	</head>
+	<body>
+<div class="modal fade" tabindex="-1" role="dialog" id='downloadModal'>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+        <label>Paste URI: <input type='text' id='downloadURI'></label>
+        <br><br>
+        <pre id='downloadOutput'></pre>
+        <br><br>
+        <button id='download' class='btn btn-primary'>Download Paste</button>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<div class="modal fade" tabindex="-1" role="dialog" id='ready'>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body">
+      	<div class='center'>
+      	<h1>Here is your paste URI!</h1>
+      	<br>
+      	<label>Magnet: <input type='text' readonly id='uriOutput'></label>
+      	<br><br>
+      	<label>Share Link: <input type='text' readonly id='shareLink'></label>
+      	</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+		<div class='container'>
+			<h1 class='center' class='title'>TorrentPaste</h1>
+			<div class='center'>
+				<form>
+					<label>Title: <input type='text' id='title' value=''></label>
+					<br><br>
+					<label>Text:<br><br><textarea id='text' cols='30' rows='10'></textarea></label>
+					<br><br>
+					<input type='submit' class='btn btn-primary btn-lg' id='go' value='Create Paste'>
+				</form>
+				<br>or
+				<button id='downloadOpen' class='btn btn-success'>Download Existing Torrent</button>
+			</div>
+		</div>
+		<script src='main.js'></script>
+	</body>
+</html>

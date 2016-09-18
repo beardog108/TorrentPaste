@@ -1,0 +1,20 @@
+.center
+{
+	text-align: center;
+}
+
+.title
+{
+	margin-bottom: 2em;
+}
+
+#downloadOutput
+{
+	width: 100%;
+	min-height: 100px;
+}
+
+iframe
+{
+border: 0;
+}
