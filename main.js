@@ -43,7 +43,7 @@ $('#download').click(function(){
 	client.add(uri, function (torrent) {
 	  // Torrents can contain many files. Let's use the first.
 	  var file = torrent.files[0];
-
+	  var markdownHTML = "";
 	  // Display the file by adding it to the DOM.
 	  // Supports video, audio, image files, and more!
 	  file.appendTo('#downloadOutput');
@@ -75,4 +75,4 @@ if(window.location.hash) {
 	  // Supports video, audio, image files, and more!
 	  file.appendTo('#downloadOutput');
 	});
-} 
+}
