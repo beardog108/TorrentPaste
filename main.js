@@ -1,4 +1,5 @@
 var client = new WebTorrent();
+var file;
 
 $('#go').click(function(){
 	if ($('#text').val() == '')
@@ -7,13 +8,12 @@ $('#go').click(function(){
 		return false;
 	}
 		var parts = [
-	  new Blob([$('#text').val()], {type: 'text/plain'}),
-	  new Uint16Array([33])
+	  new Blob([$('#text').val()], {type: 'text/markdown'}),
 	];
 
 	// Construct a file
-	var file = new File(parts, 'paste.txt', {
-	    type: "text/plain"
+	file = new File(parts, 'paste.md', {
+	    type: "text/markdown"
 	});
 
 	var fr = new FileReader();
@@ -32,6 +32,19 @@ $('#go').click(function(){
 	return false;
 });
 
+$('#markdownCheckbox').click(function(){
+	console.log("Checkbox val is " + $(this).is(':checked') );
+	if ($(this).is(':checked')) {
+		file.getBuffer(function (err, buffer) {
+  		  if (err) throw err
+  		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+  	  });
+  } else {
+	  $('#downloadOutput').html("");
+	  file.appendTo('#downloadOutput');
+  }
+})
+
 $('#downloadOpen').click(function(){
 	$('#downloadModal').modal();
 });
@@ -41,12 +54,16 @@ $('#download').click(function(){
 
 	$.bootstrapGrowl("When finished, your paste will be in the output box below", {type: 'success'});
 	client.add(uri, function (torrent) {
+		// Unhide the 'parse markdown' toggle
+		$('#markdownToggleContainer').removeAttr('hidden');
+
 	  // Torrents can contain many files. Let's use the first.
-	  var file = torrent.files[0];
-	  var markdownHTML = "";
-	  // Display the file by adding it to the DOM.
-	  // Supports video, audio, image files, and more!
-	  file.appendTo('#downloadOutput');
+	  file = torrent.files[0];
+	  // Render text to markdown, then send to DOM
+	  file.getBuffer(function (err, buffer) {
+		  if (err) throw err
+		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+	  });
 	});
 });
 
@@ -69,10 +86,13 @@ if(window.location.hash) {
 
 	client.add(uri, function (torrent) {
 	  // Torrents can contain many files. Let's use the first.
-	  var file = torrent.files[0];
+	  file = torrent.files[0];
 
 	  // Display the file by adding it to the DOM.
 	  // Supports video, audio, image files, and more!
-	  file.appendTo('#downloadOutput');
+	  file.getBuffer(function (err, buffer) {
+		  if (err) throw err
+		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+	  });
 	});
 }
