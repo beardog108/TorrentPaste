@@ -1,3 +1,4 @@
+/* Copyright (c) 2016, Kevin Froman (https://ChaosWebs.net) & Andrew Morgan (https://amorgan.xyz). MIT License */
 var client = new WebTorrent();
 var file;
 
