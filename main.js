@@ -74,7 +74,6 @@ $('#downloadOutput').bind("DOMSubtreeModified",function(){
 	$('#downloadOutput').val(txt);
 });
 
-
 $('form').on('submit', function(){
 	return false;
 });
