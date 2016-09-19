@@ -56,13 +56,67 @@ function downloadsRefresh(){
 		var count = 0;
 		var torrent;
 		while (torrent = client.torrents[count]) {
-			console.log(torrent);
-			var html = '<li class="list-group-item">' + torrent.files[0].name + '<div class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-magnet" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></li>'
+			var html = '<li class="list-group-item">' + torrent.files[0].name + '<div id="' + count  + '" class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + document.location.href + '#' + torrent.infoHash + '"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + torrent.magnetURI + '"><i class="fa fa-magnet" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></li>'
 			$('#downloadsPanelList').append(html);
 			count++;
 		}
+        $('.btn-group button').click(function(){
+            // Find out which button was pressed
+            var classesList = $(this).find('i').attr('class').split(/\s+/);
+            var id = $(this).parent().attr('id');
+            var torrent = client.torrents[id];
+            switch(classesList[1]) {
+                case 'fa-eye':
+                    $('#uriOutput').val(torrent.magnetURI);
+                    $('#shareLink').val(document.location.href + '#' + torrent.infoHash);
+                    $('#ready').modal();
+                    break;
+                case 'fa-link':
+                    var clipboard = new Clipboard('.btn-group button');
+                    $.bootstrapGrowl("Share link copied to clipboard!", {type: 'success'});
+                    break;
+                case 'fa-magnet':
+                    var clipboard = new Clipboard('.btn-group button');
+                    $.bootstrapGrowl("Magnet URI copied to clipboard!", {type: 'success'});
+                    break;
+                case 'fa-download':
+                    // Create an invisible link for the torrent download
+                    var downloadLink = document.createElement("a");
+                    downloadLink.href = torrent.torrentFileBlobURL;
+                    downloadLink.download = torrent.files[0].name + '.torrent';
+
+                    // Click the link we just made
+                    document.body.appendChild(downloadLink);
+                    downloadLink.click();
+                    document.body.removeChild(downloadLink);
+                    break;
+                case 'fa-pause-circle':
+                    // Pause torrent seeding
+                    torrent.pause();
+
+                    // Switch to play icon
+                    $(this).find('i').removeClass('fa-pause-circle').addClass('fa-play-circle');
+                    $(this).removeClass('btn-danger').addClass('btn-success');
+
+                    break;
+                case 'fa-play-circle':
+                    // Start torrent seeding
+                    torrent.resume();
+
+                    // Switch to pause icon
+                    $(this).find('i').removeClass('fa-play-circle').addClass('fa-pause-circle');
+                    $(this).removeClass('btn-play').addClass('btn-danger');
+
+                    break;
+                default:
+                    console.log('Unknown button item pressed.');
+                    break;
+            }
+        });
+
 	}, 1000);
 }
+
 
 $('#markdownCheckbox').click(function(){
 	console.log("Checkbox val is " + $(this).is(':checked') );
@@ -75,7 +129,7 @@ $('#markdownCheckbox').click(function(){
 	  $('#downloadOutput').html("");
 	  file.appendTo('#downloadOutput');
   }
-})
+});
 
 $('#downloadOpen').click(function(){
 	$('#downloadModal').modal();
@@ -112,7 +166,6 @@ $('#downloadOutput').bind("DOMSubtreeModified",function(){
 	txt = txt.replace(/[\uFFFD]/g, '');
 	$('#downloadOutput').val(txt);
 });
-
 
 $('form').on('submit', function(){
 	return false;
