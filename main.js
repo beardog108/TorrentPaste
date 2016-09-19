@@ -57,7 +57,7 @@ function downloadsRefresh(){
 		var torrent;
 		while (torrent = client.torrents[count]) {
 			console.log(torrent);
-			var html = '<li class="list-group-item">' + torrent.files[0].name + '<div class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></li>'
+			var html = '<li class="list-group-item">' + torrent.files[0].name + '<div class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-magnet" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></li>'
 			$('#downloadsPanelList').append(html);
 			count++;
 		}
