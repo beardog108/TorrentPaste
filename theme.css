@@ -28,3 +28,14 @@ iframe
 {
 border: 0;
 }
+
+/* List-view styling */
+.list-group-item .btn-group
+{
+	margin-top: -5px;
+}
+
+#downloadsPanel
+{
+	width: 50%;
+}
