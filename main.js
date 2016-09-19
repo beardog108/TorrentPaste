@@ -13,7 +13,8 @@ $('#createPaste').click(function(){
 	];
 
 	// Construct a file
-	file = new File(parts, 'paste.md', {
+	var fileName = $('#name').val();
+	file = new File(parts, fileName, {
 	    type: "text/markdown"
 	});
 
