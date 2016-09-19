@@ -83,8 +83,14 @@ $('#downloadOpen').click(function(){
 $('#download').click(function(){
 	var uri = $('#downloadURI').val();
 
+	// Unhide the download spinner
+	$('#downloadSpinner').removeClass('hidden');
+
 	$.bootstrapGrowl("When finished, your paste will be in the output box below", {type: 'success'});
 	client.add(uri, function (torrent) {
+		// Hide the download spinner
+		$('#downloadSpinner').addClass('hidden');
+
 		// Unhide the 'parse markdown' toggle
 		$('#markdownToggleContainer').removeAttr('hidden');
 
