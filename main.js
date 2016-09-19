@@ -14,6 +14,7 @@ $('#createPaste').click(function(){
 
 	// Construct a file
 	var fileName = $('#name').val();
+    if (!fileName){fileName = "Unnamed";}
 	file = new File(parts, fileName, {
 	    type: "text/markdown"
 	});
@@ -56,7 +57,8 @@ function downloadsRefresh(){
 		var count = 0;
 		var torrent;
 		while (torrent = client.torrents[count]) {
-			var html = '<li class="list-group-item">' + torrent.files[0].name + '<div id="' + count  + '" class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + document.location.href + '#' + torrent.infoHash + '"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + torrent.magnetURI + '"><i class="fa fa-magnet" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></li>'
+            var progress = '<b id="' + torrent.magnetURI + '">0%</b>';
+			var html = '<li class="list-group-item">' + torrent.files[0].name + '  ' + progress + '<div id="' + count  + '" class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + document.location.href + '#' + torrent.infoHash + '"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + torrent.magnetURI + '"><i class="fa fa-magnet" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></td></tr></table></li>';
 			$('#downloadsPanelList').append(html);
 			count++;
 		}
@@ -117,6 +119,17 @@ function downloadsRefresh(){
 	}, 1000);
 }
 
+function updateProgress()
+{
+    $('li b').each(function(index, element){
+        var magnetURI = $(this).attr('id');
+        var torrent = client.get(magnetURI);
+        if (torrent)
+            $(this).text(torrent.progress * 100 + '%');
+        else
+            console.log('No torrent found.');
+    });
+}
 
 $('#markdownCheckbox').click(function(){
 	console.log("Checkbox val is " + $(this).is(':checked') );
@@ -189,3 +202,9 @@ if(window.location.hash) {
 	  });
 	});
 }
+
+// Update torrent progress every second
+setInterval(function(){
+    updateProgress();
+},1000);
+

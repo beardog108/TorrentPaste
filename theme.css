@@ -37,7 +37,7 @@ border: 0;
 
 #downloadsPanel
 {
-	width: 50%;
+	width: 70%;
 }
 
 #refreshButton
@@ -49,4 +49,9 @@ border: 0;
 /* Remove large button outlines */
 .btn:focus,.btn:active {
    outline: none !important;
+}
+
+.progress
+{
+    width: 20%;
 }
