@@ -71,10 +71,19 @@
 			<h1 class='center' class='title'>TorrentPaste</h1>
 			<div class='center'>
 				<form>
-					<label>Text:<br><br>
+					<div class="row">
+						<div class="span4">
+<label>Name:<br><br>
+<textarea id='text' cols='30' rows='1'>
+</textarea></label>
+						</div>
+						<div class="span4">
+						<label>Text:<br><br>
 <textarea id='text' cols='30' rows='10'># Title Here
 -------------------------------
 </textarea></label>
+						</div>
+					</div>
 					<br><br>
 					<input type='submit' class='btn btn-primary btn-lg' id='createPaste' value='Create Paste'>
 				</form>
