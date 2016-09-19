@@ -75,64 +75,25 @@
 -------------------------------
 </textarea></label>
 					<br><br>
-					<input type='submit' class='btn btn-primary btn-lg' id='go' value='Create Paste'>
+					<input type='submit' class='btn btn-primary btn-lg' id='createPaste' value='Create Paste'>
 				</form>
-				<br>or
+				or<br>
 				<button id='downloadOpen' class='btn btn-success'>Download Existing Torrent</button>
 			</div>
 		</div>
 		<br><br>
 		<div id="downloadsPanel" class='container'>
-			<h2>Downloads</h2>
-			<ul class="list-group">
-				<li class="list-group-item">
-					Torrent 1
-					<div class="btn-group pull-right" role="group" aria-label="">
-						<div>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-eye" aria-hidden="true"></i>
-						  </button>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-link" aria-hidden="true"></i>
-						  </button>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-download" aria-hidden="true"></i>
-						  </button>
-						</div>
-					</div>
-				</li>
-				<li class="list-group-item">
-					Torrent 2
-					<div class="btn-group pull-right" role="group" aria-label="">
-						<div>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-eye" aria-hidden="true"></i>
-						  </button>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-link" aria-hidden="true"></i>
-						  </button>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-download" aria-hidden="true"></i>
-						  </button>
-						</div>
-					</div>
-				</li>
-				<li class="list-group-item">
-					Torrent 3
-					<div class="btn-group pull-right" role="group" aria-label="">
-						<div>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-eye" aria-hidden="true"></i>
-						  </button>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-link" aria-hidden="true"></i>
-						  </button>
-						  <button type="button" class="btn btn-sm btn-default">
-							  <i class="fa fa-download" aria-hidden="true"></i>
-						  </button>
-						</div>
-					</div>
-				</li>
+			<table>
+			<tr>
+			<td>
+				<h2>Downloads</h2>
+			</td>
+			<td>
+				<i id="refreshButton" class="fa fa-refresh" aria-hidden="true"></i>
+			</td>
+			</tr>
+			</table>
+			<ul id="downloadsPanelList" class="list-group">
 			</ul>
 		</div>
 		<script src='main.js'></script>

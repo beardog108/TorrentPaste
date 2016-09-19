@@ -39,3 +39,9 @@ border: 0;
 {
 	width: 50%;
 }
+
+#refreshButton
+{
+	position: absolute;
+	margin-left: 1em;
+}

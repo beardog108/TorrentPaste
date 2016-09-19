@@ -2,7 +2,7 @@
 var client = new WebTorrent();
 var file;
 
-$('#go').click(function(){
+$('#createPaste').click(function(){
 	if ($('#text').val() == '')
 	{
 		$.bootstrapGrowl("You need text to paste!", {type: 'danger'});
@@ -30,8 +30,38 @@ $('#go').click(function(){
 	}
 
 	fr.readAsText(file);
+
+	// Refresh downloads container
+	downloadsRefresh();
 	return false;
 });
+
+$('#refreshButton').click(function(){
+	// Spin refresh button
+	$('#refreshButton').addClass('fa-spin');
+
+	downloadsRefresh();
+});
+
+function downloadsRefresh(){
+	$('#downloadsPanelList').html('');
+
+	// Allow client object time to update torrent list
+	setTimeout(function(){
+		// Stop spinning refresh
+		$('#refreshButton').removeClass('fa-spin');
+
+		// List active torrents
+		var count = 0;
+		var torrent;
+		while (torrent = client.torrents[count]) {
+			console.log(torrent);
+			var html = '<li class="list-group-item">' + torrent.files[0].name + '<div class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></li>'
+			$('#downloadsPanelList').append(html);
+			count++;
+		}
+	}, 1000);
+}
 
 $('#markdownCheckbox').click(function(){
 	console.log("Checkbox val is " + $(this).is(':checked') );
@@ -65,6 +95,8 @@ $('#download').click(function(){
 		  if (err) throw err
 		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
 	  });
+
+	  downloadsRefresh();
 	});
 });
 
