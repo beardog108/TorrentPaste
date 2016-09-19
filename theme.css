@@ -45,3 +45,8 @@ border: 0;
 	position: absolute;
 	margin-left: 1em;
 }
+
+/* Remove large button outlines */
+.btn:focus,.btn:active {
+   outline: none !important;
+}
