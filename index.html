@@ -12,6 +12,7 @@
 		<script src="bootstrap.min.js"></script>
 		<script src='bs-growl.min.js'></script>
 		<script src='markdown.min.js'></script>
+		<script src='crypto-js.js'></script>
 	</head>
 	<body>
 <div class="modal fade" tabindex="-1" role="dialog" id='downloadModal'>
@@ -76,6 +77,9 @@
 -------------------------------
 </textarea></label>
 					<br><br>
+					<label>Password Protect: <input type='checkbox' id='encryptBox'></label>
+					<label id='encryptPasswordArea'>Password: <input type='password' id='encryptPassword'></label>
+					<br><br>
 					<input type='submit' class='btn btn-primary btn-lg' id='createPaste' value='Create Paste'>
 				</form>
 				or<br>
@@ -97,6 +101,7 @@
 			<ul id="downloadsPanelList" class="list-group">
 			</ul>
 		</div>
+		<script src='encrypt.js'></script>
 		<script src='main.js'></script>
 	</body>
 </html>

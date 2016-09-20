@@ -50,3 +50,8 @@ border: 0;
 .btn:focus,.btn:active {
    outline: none !important;
 }
+
+#encryptPasswordArea
+{
+	display: none;
+}

@@ -1,6 +1,21 @@
 /* Copyright (c) 2016, Kevin Froman (https://ChaosWebs.net) & Andrew Morgan (https://amorgan.xyz). MIT License */
 var client = new WebTorrent();
 var file;
+var password;
+var plaintext;
+var text;
+
+$('#encryptBox').change(function() 
+{
+	if($(this).is(':checked')) 
+	{
+		$('#encryptPasswordArea').css('display', 'block');
+	}
+	else
+	{
+		$('#encryptPasswordArea').css('display', 'none');
+	}
+});
 
 $('#createPaste').click(function(){
 	if ($('#text').val() == '')
@@ -8,9 +23,30 @@ $('#createPaste').click(function(){
 		$.bootstrapGrowl("You need text to paste!", {type: 'danger'});
 		return false;
 	}
-		var parts = [
-	  new Blob([$('#text').val()], {type: 'text/markdown'}),
+	else
+	{
+		text = $('#text').val();
+	}
+
+	if ($('#encryptBox').is(':checked'))
+	{
+		if ($('#encryptPassword').val() == '')
+		{
+			$.bootstrapGrowl("You must specify a password!", {type: 'danger'});
+			return false;
+		}
+		else
+		{
+			password = $('#encryptPassword').val();
+			text = CryptoJS.AES.encrypt(text, password);
+			text = '-----begin encrypted paste-----' + text;
+			$('#text').val(text);
+		}
+	}
+	var parts = [
+	  new Blob([text], {type: 'text/markdown'}),
 	];
+
 
 	// Construct a file
 	file = new File(parts, 'paste.md', {
