@@ -8,10 +8,59 @@ var password;
 var plaintext;
 var text;
 
+window.pasteDecryptBuffer = '';
+
+function detectEncrypted(pasteData)
+{
+	if (pasteData.includes('-----begin encrypted paste-----'))
+	{
+		$('#decryptArea').css('display', 'inline');
+		$.bootstrapGrowl("This paste appears encrypted.", {type: 'warning'});
+		window.pasteDecryptBuffer = pasteData.replace('-----begin encrypted paste-----', '');
+		console.log(window.pasteDecryptBuffer);
+	}
+}
+
+$('#decryptButton').click(function(){
+	var password = $('#decryptPassword').val();
+	var decrypted;
+	if (password == '')
+	{
+		return false;
+	}
+	decrypted = CryptoJS.AES.decrypt(window.pasteDecryptBuffer.toString(), password);
+	decrypted = decrypted.toString(CryptoJS.enc.Utf8);
+	console.log(decrypted);
+	if (decrypted == '')
+	{
+		$.bootstrapGrowl("Invalid password.", {type: 'danger'});
+		return false;
+	}
+	else
+	{
+		if ($('#markdownCheckbox').is(':checked'))
+		{
+			$('#downloadOutput').html(markdown.toHTML(decrypted));
+		}
+		else
+		{
+			$('#downloadOutput').html(decrypted);
+		}
+	}
+
+});
+
 $('#encryptBox').change(function() 
 {
 	if($(this).is(':checked')) 
 	{
+		// Show unencrypted title disclaimer if the user hasn't seen it
+		if (localStorage['titleDisclaimer'] == undefined)
+		{
+			$.bootstrapGrowl("Warning: Paste titles are not encrypted", {type: 'danger'});
+			localStorage['titleDisclaimer'] = true;
+		}
+
 		$('#encryptPasswordArea').css('display', 'block');
 	}
 	else
@@ -243,6 +292,7 @@ $('#markdownCheckbox').click(function(){
 
 $('#downloadOpen').click(function(){
 	$('#downloadModal').modal();
+	$('#download').css('display', 'inline');
 });
 
 $('#download').click(function(){
@@ -269,6 +319,8 @@ $('#download').click(function(){
 	  file.getBuffer(function (err, buffer) {
 		  if (err) throw err
 		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+		  $('#download').css('display', 'none');
+		  detectEncrypted(buffer.toString('utf8'));
 	  });
 
 	  downloadsRefresh();
@@ -292,6 +344,7 @@ if(window.location.hash) {
 	$.bootstrapGrowl("When finished, your paste will be in the output box below", {type: 'success'});
 
 	$('#downloadModal').modal();
+	$('#download').css('display', 'inline');
 	var uri = 'magnet:?xt=urn:btih:' + windowHash + '&dn=paste.txt&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.webtorrent.io';
 
 	client.add(uri, function (torrent) {
@@ -311,4 +364,3 @@ if(window.location.hash) {
 setInterval(function(){
     updateProgress();
 },1000);
-

@@ -12,11 +12,10 @@
 		<script src="bootstrap.min.js"></script>
 		<script src='bs-growl.min.js'></script>
 		<script src='markdown.min.js'></script>
-<<<<<<< HEAD
 		<script src='crypto-js.js'></script>
-=======
+
         <script src='clipboard.min.js'></script>
->>>>>>> status-panel
+
 	</head>
 	<body>
 <div class="modal fade" tabindex="-1" role="dialog" id='downloadModal'>
@@ -43,6 +42,10 @@
 		<div id='downloadOutput'></div>
         <br><br>
         <button id='download' class='btn btn-primary'>Download Paste</button>
+        <span id='decryptArea'>
+        	<label>Password: <input type='password' id='decryptPassword'></label> 
+        	<button id='decryptButton' class='btn btn-primary'>Decrypt Paste</button>
+        </span>
 		<i id="downloadSpinner" class="fa fa-spinner fa-spin hidden" aria-hidden="true" hidden="hidden"></i>
       </div>
       <div class="modal-footer">

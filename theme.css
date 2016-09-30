@@ -12,6 +12,7 @@
 {
 	width: 100%;
 	min-height: 100px;
+	overflow-wrap: break-word;
 }
 
 #markdownToggleTable
@@ -52,12 +53,12 @@ border: 0;
    outline: none !important;
 }
 
-<<<<<<< HEAD
-#encryptPasswordArea
+
+#encryptPasswordArea, #decryptArea
 {
 	display: none;
 }
-=======
+
 .progress
 {
     width: 20%;
@@ -91,4 +92,3 @@ border: 0;
 {
     color: dodgerblue;
 }
->>>>>>> status-panel
