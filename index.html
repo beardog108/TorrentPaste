@@ -12,7 +12,11 @@
 		<script src="bootstrap.min.js"></script>
 		<script src='bs-growl.min.js'></script>
 		<script src='markdown.min.js'></script>
+<<<<<<< HEAD
 		<script src='crypto-js.js'></script>
+=======
+        <script src='clipboard.min.js'></script>
+>>>>>>> status-panel
 	</head>
 	<body>
 <div class="modal fade" tabindex="-1" role="dialog" id='downloadModal'>
@@ -72,10 +76,19 @@
 			<h1 class='center' class='title'>TorrentPaste</h1>
 			<div class='center'>
 				<form>
-					<label>Text:<br><br>
+					<div class="row">
+						<div class="span4">
+<label>Name:<br><br>
+<textarea id='name' cols='30' rows='1'>
+</textarea></label>
+						</div>
+						<div class="span4">
+						<label>Text:<br><br>
 <textarea id='text' cols='30' rows='10'># Title Here
 -------------------------------
 </textarea></label>
+						</div>
+					</div>
 					<br><br>
 					<label>Password Protect: <input type='checkbox' id='encryptBox'></label>
 					<label id='encryptPasswordArea'>Password: <input type='password' id='encryptPassword'></label>
