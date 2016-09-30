@@ -12,6 +12,7 @@
 {
 	width: 100%;
 	min-height: 100px;
+	overflow-wrap: break-word;
 }
 
 #markdownToggleTable
@@ -27,4 +28,67 @@
 iframe
 {
 border: 0;
+}
+
+/* List-view styling */
+.list-group-item .btn-group
+{
+	margin-top: -5px;
+}
+
+#downloadsPanel
+{
+	width: 70%;
+    display: none;
+}
+
+#refreshButton
+{
+	position: absolute;
+	margin-left: 1em;
+}
+
+/* Remove large button outlines */
+.btn:focus,.btn:active {
+   outline: none !important;
+}
+
+
+#encryptPasswordArea, #decryptArea
+{
+	display: none;
+}
+
+.progress
+{
+    width: 20%;
+}
+
+.close
+{
+    padding-right: 4px;
+    padding-bottom: 3px;
+}
+
+.downloadsTable
+{
+    table-layout: fixed;
+}
+
+.truncated-text
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    table-layout: fixed;
+}
+
+#peers
+{
+    color: limegreen;
+}
+
+#ratio
+{
+    color: dodgerblue;
 }
