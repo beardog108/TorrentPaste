@@ -38,6 +38,7 @@ border: 0;
 #downloadsPanel
 {
 	width: 70%;
+    display: none;
 }
 
 #refreshButton

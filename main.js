@@ -38,6 +38,10 @@ $('#createPaste').click(function(){
 
 	// Refresh downloads container
 	downloadsRefresh();
+
+    // Unhide downloadsPanel
+    $('#downloadsPanel').css('display', 'block');
+
 	return false;
 });
 
@@ -206,6 +210,10 @@ $('#downloadOpen').click(function(){
 });
 
 $('#download').click(function(){
+
+    // Unhide downloadsPanel
+    $('#downloadsPanel').css('display', 'block');
+
 	var uri = $('#downloadURI').val();
 
 	// Unhide the download spinner
@@ -242,6 +250,8 @@ $('form').on('submit', function(){
 });
 
 if(window.location.hash) {
+    // Unhide downloadsPanel
+    $('#downloadsPanel').css('display', 'block');
     var windowHash = window.location.hash.replace('#', '');
 	$.bootstrapGrowl("When finished, your paste will be in the output box below", {type: 'success'});
 
