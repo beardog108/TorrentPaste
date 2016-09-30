@@ -114,9 +114,23 @@ function downloadsRefresh(){
             var torrent = client.torrents[id - torrentOffset];
             switch(classesList[1]) {
                 case 'fa-eye':
-                    $('#uriOutput').val(torrent.magnetURI);
-                    $('#shareLink').val(document.location.href + '#' + torrent.infoHash);
-                    $('#ready').modal();
+                    //$('#uriOutput').val(torrent.magnetURI);
+                    //$('#shareLink').val(document.location.href + '#' + torrent.infoHash);
+                    file = torrent.files[0];
+                    
+                    file.getBuffer(function (err, buffer) {
+                        if (err) throw err
+                        $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+                    });
+
+                    $('#downloadModal').modal();
+                    
+                    // Hide the download UI elements
+                    $('#download').hide();
+                    $('#downloadURILabel').hide();
+                    $('#markdownToggleContainer').show();
+                    $('#torrentFileName').text(file.name);
+
                     break;
                 case 'fa-link':
                     var clipboard = new Clipboard('.btn-group button');
@@ -189,19 +203,22 @@ function updateProgress()
 }
 
 $('#markdownCheckbox').click(function(){
-	console.log("Checkbox val is " + $(this).is(':checked') );
 	if ($(this).is(':checked')) {
 		file.getBuffer(function (err, buffer) {
   		  if (err) throw err
   		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
-  	  });
+  	    });
   } else {
-	  $('#downloadOutput').html("");
+	  $('#downloadOutput').html('');
 	  file.appendTo('#downloadOutput');
   }
 });
 
 $('#downloadOpen').click(function(){
+    // Make sure download paste button is showing
+    $('#download').show();
+    $('#downloadURILabel').show();
+
 	$('#downloadModal').modal();
 });
 
@@ -247,9 +264,15 @@ if(window.location.hash) {
 	$('#downloadModal').modal();
 	var uri = 'magnet:?xt=urn:btih:' + window.location.hash + '&dn=paste.txt&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.webtorrent.io';
 
+    // Show download spinner
+    $('#downloadSpinner').removeClass('hidden');
+
 	client.add(uri, function (torrent) {
 	  // Torrents can contain many files. Let's use the first.
 	  file = torrent.files[0];
+
+      // Display title of torrent
+      $('#torrentFileName').text(file.name);
 
 	  // Display the file by adding it to the DOM.
 	  // Supports video, audio, image files, and more!
