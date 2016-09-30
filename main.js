@@ -263,8 +263,12 @@ function downloadsRefresh(){
                     torrent.destroy();
                     downloadsRefresh();
 
-                    /* Torrent is undefined */
+                    // Torrent is undefined
                     $(this).parents('.list-group-item').remove();
+
+                    // Hide downloads panel if there are no downloads
+                    if (client.torrents.length == 0)
+                        $('#downloadsPanel').css('display', 'none');
 
                     break;
                 default:
