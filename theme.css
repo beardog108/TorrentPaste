@@ -74,3 +74,13 @@ border: 0;
     text-overflow: ellipsis;
     table-layout: fixed;
 }
+
+#peers
+{
+    color: limegreen;
+}
+
+#ratio
+{
+    color: dodgerblue;
+}

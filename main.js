@@ -61,12 +61,19 @@ function downloadsRefresh(){
 		while (torrent = client.torrents[count]) {
             console.log("Got a torrent!");
             var progress = '<b id="' + torrent.magnetURI + '">0%</b>';
+            var peers = '<b id="peers">P: </b>' + torrent.numPeers;
+            var ratio = '<b id="ratio">R: </b>' + torrent.ratio.toFixed(2);
             html += `
 <li class="list-group-item">
     <div class="row">
-        <div class="col-xs-6 truncated-text">` + torrent.files[0]. name + `  ` + 
-        progress + `</div> 
-        <div class="col-xs-6"><span class="pull-right">` + `
+        <div class="col-xs-6 truncated-text">` + progress + `   ` +
+        torrent.files[0].name + 
+            `<div class="row">
+                <div class="col-xs-1">` + peers + `</div>
+                <div class="col-xs-1">` + ratio + `</div>
+            </div>
+        </div>
+        <div class="col-xs-6"><span class="pull-right">
             <div id="` + count  + `" class="btn-group" role="group" aria-label="">
                 <button type="button" class="btn btn-sm btn-default">
                   <i class="fa fa-eye" aria-hidden="true"></i>
@@ -87,7 +94,8 @@ function downloadsRefresh(){
                   <i class="fa fa-close" aria-hidden="true"></i>
                 </button>
             </div>
-        </span></div>
+        </span>
+        </div>
     </div>
 </li>
             `;
