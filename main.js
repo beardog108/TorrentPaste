@@ -1,4 +1,7 @@
 /* Copyright (c) 2016, Kevin Froman (https://ChaosWebs.net) & Andrew Morgan (https://amorgan.xyz). MIT License */
+// Broken, replace
+var torrentOffset = 0;
+
 var client = new WebTorrent();
 var file;
 
@@ -46,8 +49,6 @@ $('#refreshButton').click(function(){
 });
 
 function downloadsRefresh(){
-	$('#downloadsPanelList').html('');
-
 	// Allow client object time to update torrent list
 	setTimeout(function(){
 		// Stop spinning refresh
@@ -56,17 +57,54 @@ function downloadsRefresh(){
 		// List active torrents
 		var count = 0;
 		var torrent;
+        var html = "";
 		while (torrent = client.torrents[count]) {
+            console.log("Got a torrent!");
             var progress = '<b id="' + torrent.magnetURI + '">0%</b>';
-			var html = '<li class="list-group-item">' + torrent.files[0].name + '  ' + progress + '<div id="' + count  + '" class="btn-group pull-right" role="group" aria-label=""><button type="button" class="btn btn-sm btn-default"><i class="fa fa-eye" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + document.location.href + '#' + torrent.infoHash + '"><i class="fa fa-link" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="' + torrent.magnetURI + '"><i class="fa fa-magnet" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-default"><i class="fa fa-download" aria-hidden="true"></i></button><button type="button" class="btn btn-sm btn-danger"><i class="fa fa-pause-circle" aria-hidden="true"></i></button></div></td></tr></table></li>';
-			$('#downloadsPanelList').append(html);
+            html += `
+<li class="list-group-item">
+    <div class="row">
+        <div class="col-xs-6 truncated-text">` + torrent.files[0]. name + `  ` + 
+        progress + `</div> 
+        <div class="col-xs-6"><span class="pull-right">` + `
+            <div id="` + count  + `" class="btn-group" role="group" aria-label="">
+                <button type="button" class="btn btn-sm btn-default">
+                  <i class="fa fa-eye" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data- clipboard-text="` + document.location.href + '#' + torrent.infoHash + `">
+                  <i class="fa fa-link" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard- text="` + torrent.magnetURI + `">
+                  <i class="fa fa-magnet" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-default">
+                  <i class="fa fa-download" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-danger">
+                  <i class="fa fa-pause-circle" aria-hidden="true"></i>
+                </button>
+                <button type="button" class="btn btn-sm btn-default">
+                  <i class="fa fa-close" aria-hidden="true"></i>
+                </button>
+            </div>
+        </span></div>
+    </div>
+</li>
+            `;
 			count++;
 		}
+        // Can mess with VimFX
+        // If they select links and then html refreshs, removing their links
+        $('#downloadsPanelList').html(html);
+
+        $('.close').click(function(){
+            $(this).attr('id');
+        });
         $('.btn-group button').click(function(){
             // Find out which button was pressed
             var classesList = $(this).find('i').attr('class').split(/\s+/);
             var id = $(this).parent().attr('id');
-            var torrent = client.torrents[id];
+            var torrent = client.torrents[id - torrentOffset];
             switch(classesList[1]) {
                 case 'fa-eye':
                     $('#uriOutput').val(torrent.magnetURI);
@@ -110,12 +148,20 @@ function downloadsRefresh(){
                     $(this).removeClass('btn-play').addClass('btn-danger');
 
                     break;
+                case 'fa-close':
+                    // Remove torrent from client
+                    torrent.destroy();
+                    downloadsRefresh();
+
+                    /* Torrent is undefined */
+                    $(this).parents('.list-group-item').remove();
+
+                    break;
                 default:
                     console.log('Unknown button item pressed.');
                     break;
             }
         });
-
 	}, 1000);
 }
 

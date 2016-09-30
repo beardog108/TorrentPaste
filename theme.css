@@ -55,3 +55,22 @@ border: 0;
 {
     width: 20%;
 }
+
+.close
+{
+    padding-right: 4px;
+    padding-bottom: 3px;
+}
+
+.downloadsTable
+{
+    table-layout: fixed;
+}
+
+.truncated-text
+{
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    table-layout: fixed;
+}
