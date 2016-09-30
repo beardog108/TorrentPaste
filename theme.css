@@ -12,6 +12,7 @@
 {
 	width: 100%;
 	min-height: 100px;
+	overflow-wrap: break-word;
 }
 
 #markdownToggleTable
@@ -38,6 +39,7 @@ border: 0;
 #downloadsPanel
 {
 	width: 70%;
+    display: none;
 }
 
 #refreshButton
@@ -49,6 +51,12 @@ border: 0;
 /* Remove large button outlines */
 .btn:focus,.btn:active {
    outline: none !important;
+}
+
+
+#encryptPasswordArea, #decryptArea
+{
+	display: none;
 }
 
 .progress

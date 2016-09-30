@@ -4,6 +4,70 @@ var torrentOffset = 0;
 
 var client = new WebTorrent();
 var file;
+var password;
+var plaintext;
+var text;
+
+window.pasteDecryptBuffer = '';
+
+function detectEncrypted(pasteData)
+{
+	if (pasteData.includes('-----begin encrypted paste-----'))
+	{
+		$('#decryptArea').css('display', 'inline');
+		$.bootstrapGrowl("This paste appears encrypted.", {type: 'warning'});
+		window.pasteDecryptBuffer = pasteData.replace('-----begin encrypted paste-----', '');
+		console.log(window.pasteDecryptBuffer);
+	}
+}
+
+$('#decryptButton').click(function(){
+	var password = $('#decryptPassword').val();
+	var decrypted;
+	if (password == '')
+	{
+		return false;
+	}
+	decrypted = CryptoJS.AES.decrypt(window.pasteDecryptBuffer.toString(), password);
+	decrypted = decrypted.toString(CryptoJS.enc.Utf8);
+	console.log(decrypted);
+	if (decrypted == '')
+	{
+		$.bootstrapGrowl("Invalid password.", {type: 'danger'});
+		return false;
+	}
+	else
+	{
+		if ($('#markdownCheckbox').is(':checked'))
+		{
+			$('#downloadOutput').html(markdown.toHTML(decrypted));
+		}
+		else
+		{
+			$('#downloadOutput').html(decrypted);
+		}
+	}
+
+});
+
+$('#encryptBox').change(function() 
+{
+	if($(this).is(':checked')) 
+	{
+		// Show unencrypted title disclaimer if the user hasn't seen it
+		if (localStorage['titleDisclaimer'] == undefined)
+		{
+			$.bootstrapGrowl("Warning: Paste titles are not encrypted", {type: 'danger'});
+			localStorage['titleDisclaimer'] = true;
+		}
+
+		$('#encryptPasswordArea').css('display', 'block');
+	}
+	else
+	{
+		$('#encryptPasswordArea').css('display', 'none');
+	}
+});
 
 $('#createPaste').click(function(){
 	if ($('#text').val() == '')
@@ -11,9 +75,30 @@ $('#createPaste').click(function(){
 		$.bootstrapGrowl("You need text to paste!", {type: 'danger'});
 		return false;
 	}
-		var parts = [
-	  new Blob([$('#text').val()], {type: 'text/markdown'}),
+	else
+	{
+		text = $('#text').val();
+	}
+
+	if ($('#encryptBox').is(':checked'))
+	{
+		if ($('#encryptPassword').val() == '')
+		{
+			$.bootstrapGrowl("You must specify a password!", {type: 'danger'});
+			return false;
+		}
+		else
+		{
+			password = $('#encryptPassword').val();
+			text = CryptoJS.AES.encrypt(text, password);
+			text = '-----begin encrypted paste-----' + text;
+			$('#text').val(text);
+		}
+	}
+	var parts = [
+	  new Blob([text], {type: 'text/markdown'}),
 	];
+
 
 	// Construct a file
 	var fileName = $('#name').val();
@@ -38,6 +123,10 @@ $('#createPaste').click(function(){
 
 	// Refresh downloads container
 	downloadsRefresh();
+
+    // Unhide downloadsPanel
+    $('#downloadsPanel').css('display', 'block');
+
 	return false;
 });
 
@@ -220,9 +309,14 @@ $('#downloadOpen').click(function(){
     $('#downloadURILabel').show();
 
 	$('#downloadModal').modal();
+	$('#download').css('display', 'inline');
 });
 
 $('#download').click(function(){
+
+    // Unhide downloadsPanel
+    $('#downloadsPanel').css('display', 'block');
+
 	var uri = $('#downloadURI').val();
 
 	// Unhide the download spinner
@@ -242,6 +336,8 @@ $('#download').click(function(){
 	  file.getBuffer(function (err, buffer) {
 		  if (err) throw err
 		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+		  $('#download').css('display', 'none');
+		  detectEncrypted(buffer.toString('utf8'));
 	  });
 
 	  downloadsRefresh();
@@ -259,10 +355,14 @@ $('form').on('submit', function(){
 });
 
 if(window.location.hash) {
+    // Unhide downloadsPanel
+    $('#downloadsPanel').css('display', 'block');
+    var windowHash = window.location.hash.replace('#', '');
 	$.bootstrapGrowl("When finished, your paste will be in the output box below", {type: 'success'});
 
 	$('#downloadModal').modal();
-	var uri = 'magnet:?xt=urn:btih:' + window.location.hash + '&dn=paste.txt&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.webtorrent.io';
+	$('#download').css('display', 'inline');
+	var uri = 'magnet:?xt=urn:btih:' + windowHash + '&dn=paste.txt&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.webtorrent.io';
 
     // Show download spinner
     $('#downloadSpinner').removeClass('hidden');
@@ -287,4 +387,3 @@ if(window.location.hash) {
 setInterval(function(){
     updateProgress();
 },1000);
-
