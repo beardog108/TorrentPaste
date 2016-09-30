@@ -59,16 +59,15 @@ function downloadsRefresh(){
 		var torrent;
         var html = "";
 		while (torrent = client.torrents[count]) {
-            console.log("Got a torrent!");
-            var progress = '<b id="' + torrent.magnetURI + '">0%</b>';
-            var peers = '<b id="peers">P: </b>' + torrent.numPeers;
-            var ratio = '<b id="ratio">R: </b>' + torrent.ratio.toFixed(2);
+            var progress = '<b class="torrentProgress" id="' + torrent.magnetURI + '">0%</b>';
+            var name = torrent.files[0].name;
+            var peers = '<b id="peers">P: </b><span id="peers-text">' + torrent.numPeers + '</span>';
+            var ratio = '<b id="ratio">R: </b><span id="ratio-text">' + torrent.ratio.toFixed(2) + '</span>';
             html += `
 <li class="list-group-item">
     <div class="row">
-        <div class="col-xs-6 truncated-text">` + progress + `   ` +
-        torrent.files[0].name + 
-            `<div class="row">
+        <div class="col-xs-6 truncated-text">` + progress + `   ` + name + 
+            `<div id="stats" class="row">
                 <div class="col-xs-1">` + peers + `</div>
                 <div class="col-xs-1">` + ratio + `</div>
             </div>
@@ -78,10 +77,10 @@ function downloadsRefresh(){
                 <button type="button" class="btn btn-sm btn-default">
                   <i class="fa fa-eye" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data- clipboard-text="` + document.location.href + '#' + torrent.infoHash + `">
+                <button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="` + document.location.href + '#' + torrent.infoHash + `">
                   <i class="fa fa-link" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard- text="` + torrent.magnetURI + `">
+                <button id = "magnet" type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="` + torrent.magnetURI + `">
                   <i class="fa fa-magnet" aria-hidden="true"></i>
                 </button>
                 <button type="button" class="btn btn-sm btn-default">
@@ -175,13 +174,17 @@ function downloadsRefresh(){
 
 function updateProgress()
 {
-    $('li b').each(function(index, element){
+    $('.torrentProgress').each(function() {
         var magnetURI = $(this).attr('id');
         var torrent = client.get(magnetURI);
-        if (torrent)
+        var downloadContainer = $(this).parents('.row');
+        if (torrent){
             $(this).text(torrent.progress * 100 + '%');
+            downloadContainer.find('#peers-text').text(torrent.numPeers);
+            downloadContainer.find('#ratio-text').text(torrent.ratio.toFixed(2));
+        }
         else
-            console.log('No torrent found.');
+            console.log(magnetURI + ' not found.');
     });
 }
 
