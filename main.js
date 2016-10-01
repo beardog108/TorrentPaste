@@ -116,13 +116,9 @@ $('#createPaste').click(function(){
 	fr.onload = function(evt){
 		client.seed(file, function (torrent) {
     		console.log('Client is seeding ' + torrent.magnetURI);
-    		$('#uriOutput').val(torrent.magnetURI);
-            $('#uriOutput').attr('data-clipboard-action', 'copy');
-            $('#uriOutput').attr('data-clipboard-text', torrent.magnetURI);
+            $('#uriOutput').val(torrent.magnetURI);
 
-    		$('#shareLink').val(document.location.href + '#' + torrent.infoHash);
-            $('#shareLink').attr('data-clipboard-action', 'copy');
-            $('#shareLink').attr('data-clipboard-text', document.location.href + '#' + torrent.infoHash);
+            $('#shareLink').val(document.location.href + '#' + torrent.infoHash);
 
     		$('#ready').modal();
  		});
@@ -140,12 +136,25 @@ $('#createPaste').click(function(){
 });
 
 $('#createMagnetCopy').click(function() {
-    var clipboard = new Clipboard('#uriOutput');
+    var clipboard = new Clipboard('#createMagnetCopy');
+
+    clipboard.on('success', function(e) {
+        console.info('Action:', e.action);
+        console.info('Text:', e.text);
+        console.info('Trigger:', e.trigger);
+
+        e.clearSelection();
+    });
+
+    clipboard.on('error', function(e) {
+        console.error('Action:', e.action);
+        console.error('Trigger:', e.trigger);
+    });
     $.bootstrapGrowl("Magnet URI copied to clipboard!", {type: 'success'});
 });
 
 $('#createShareCopy').click(function() {
-    var clipboard = new Clipboard('#shareLink');
+    var clipboard = new Clipboard('#createShareCopy');
     $.bootstrapGrowl("Share link copied to clipboard!", {type: 'success'});
 });
 
