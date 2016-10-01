@@ -12,6 +12,7 @@
 {
 	width: 100%;
 	min-height: 100px;
+	white-space: pre;
 }
 
 #markdownToggleTable
@@ -114,4 +115,9 @@ border: 0;
 {
     /* Space out from the left */
     margin-left:1em
+}
+
+#markdownCheckbox
+{
+	margin-right: 5px;
 }
