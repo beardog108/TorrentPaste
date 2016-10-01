@@ -24,6 +24,10 @@ function detectEncrypted(pasteData)
 		window.pasteDecryptBuffer = pasteData.replace('-----begin encrypted paste-----', '');
 		console.log(window.pasteDecryptBuffer);
 	}
+    else
+    {
+        $('#decryptArea').css('display', 'none');
+    }
 }
 
 $('#decryptButton').click(function(){
@@ -33,7 +37,13 @@ $('#decryptButton').click(function(){
 	{
 		return false;
 	}
-	decrypted = CryptoJS.AES.decrypt(window.pasteDecryptBuffer.toString(), password);
+    if ($('#markdownCheckbox').is(':checked')) {
+        decrypted = CryptoJS.AES.decrypt($('#pasteOutput').data().orig.replace('-----begin encrypted paste-----', ''), password);
+    }
+    else
+    {
+	   decrypted = CryptoJS.AES.decrypt(window.pasteDecryptBuffer.toString(), password);
+    }
 	decrypted = decrypted.toString(CryptoJS.enc.Utf8);
 	console.log(decrypted);
 	if (decrypted == '')
@@ -43,14 +53,11 @@ $('#decryptButton').click(function(){
 	}
 	else
 	{
-		if ($('#markdownCheckbox').is(':checked'))
-		{
-			$('#downloadOutput').html(markdown.toHTML(decrypted));
-		}
-		else
-		{
-			$('#downloadOutput').html(decrypted);
-		}
+		$('#pasteOutput').html(decrypted);
+        $('#decryptArea').css('display', 'none');
+         if ($('#markdownCheckbox').is(':checked')) {
+        markdownCheck();
+        }
 	}
 
 });
@@ -285,16 +292,13 @@ function showPaste(torrent)
         
     file.getBuffer(function (err, buffer) {
         if (err) throw err
-        $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+        $('#pasteOutput').html(buffer.toString('utf8'));
+        detectEncrypted(buffer.toString('utf8'));
     });
 
-    $('#downloadModal').modal();
-    
-    // Hide the download UI elements
-    $('#download').hide();
-    $('#downloadURILabel').hide();
-    $('#markdownToggleContainer').show();
-    $('#torrentFileName').text(file.name);
+    $('#showModal').modal();
+
+
 }
 
 function updateProgress()
@@ -314,16 +318,26 @@ function updateProgress()
 }
 
 $('#markdownCheckbox').click(function(){
-	if ($(this).is(':checked')) {
-		file.getBuffer(function (err, buffer) {
-  		  if (err) throw err
-  		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
-  	    });
-  } else {
-	  $('#downloadOutput').html('');
-	  file.appendTo('#downloadOutput');
-  }
+markdownCheck();
 });
+
+function markdownCheck()
+{
+ if ($('#markdownCheckbox').is(':checked')) {
+        var data = $('#pasteOutput').html();
+        $('#pasteOutput').css('white-space', 'normal');
+        $('#pasteOutput').data('orig', data);
+        var markdownResult = markdown.toHTML(data);
+        $('#pasteOutput').html(markdownResult);
+        detectEncrypted(markdownResult);
+  } 
+  else {
+    var orig = $('#pasteOutput').data().orig;
+    $('#pasteOutput').html(orig);
+    $('#pasteOutput').css('white-space', 'pre');
+    detectEncrypted(orig);
+  }
+}
 
 $('#downloadOpen').click(function(){
     // Make sure download paste button is showing
@@ -349,27 +363,19 @@ $('#download').click(function(){
 		// Hide the download spinner
 		$('#downloadSpinner').addClass('hidden');
 
-		// Unhide the 'parse markdown' toggle
-		$('#markdownToggleContainer').removeAttr('hidden');
 
 	  // Torrents can contain many files. Let's use the first.
 	  file = torrent.files[0];
 	  // Render text to markdown, then send to DOM
 	  file.getBuffer(function (err, buffer) {
 		  if (err) throw err
-		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
-		  $('#download').css('display', 'none');
-		  detectEncrypted(buffer.toString('utf8'));
+		  showPaste(torrent);
+          $('#downloadModal').modal('hide');
+          $('#downloadURI').val('');
 	  });
 
 	  downloadsRefresh();
 	});
-});
-
-$('#downloadOutput').bind("DOMSubtreeModified",function(){
-	var txt = $('#downloadOutput').val();
-	txt = txt.replace(/[\uFFFD]/g, '');
-	$('#downloadOutput').val(txt);
 });
 
 $('form').on('submit', function(){
@@ -380,24 +386,16 @@ if(window.location.hash) {
     // Unhide downloadsPanel
     $('#downloadsPanel').css('display', 'block');
     var windowHash = window.location.hash.replace('#', '');
-	$.bootstrapGrowl("When finished, your paste will be in the output box below", {type: 'success'});
+	$.bootstrapGrowl("Your paste is now downloading.", {type: 'success'});
 
-	$('#downloadModal').modal();
-	$('#download').css('display', 'inline');
 	var uri = 'magnet:?xt=urn:btih:' + windowHash + '&dn=paste.txt&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.webtorrent.io';
-
     // Show download spinner
-    $('#downloadSpinner').removeClass('hidden');
-
-    // Hide the download UI elements
-    $('#download').hide();
-    $('#downloadURILabel').hide();
-    $('#markdownToggleContainer').show();
+    $('#downloadSpinner').removeClass('hidden');    
 
 	client.add(uri, function (torrent) {
         // Hide download spinner
         $('#downloadSpinner').addClass('hidden');
-        showPaste(torrent);
+        downloadsRefresh();
 	});
 }
 

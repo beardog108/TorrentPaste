@@ -8,11 +8,10 @@
 	margin-bottom: 2em;
 }
 
-#downloadOutput
+#pasteOutput
 {
 	width: 100%;
 	min-height: 100px;
-	overflow-wrap: break-word;
 }
 
 #markdownToggleTable
