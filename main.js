@@ -148,6 +148,14 @@ $('#createMagnetCopy').click(function() {
     $.bootstrapGrowl("Magnet URI copied to clipboard!", {type: 'success'});
 });
 
+$('.modal-footer button').click(function() {
+    // Uncheck all checkboxes on modal close
+    if ($('#highlightCheckbox').is(':checked')) 
+        $('#highlightCheckbox').click();  
+    if ($('#markdownCheckbox').is(':checked')) 
+        $('#markdownCheckbox').click();  
+});
+
 $('#createShareCopy').click(function() {
     var clipboard = new Clipboard('#createShareCopy');
     $.bootstrapGrowl("Share link copied to clipboard!", {type: 'success'});
@@ -316,11 +324,11 @@ function updateProgress()
 }
 
 $('#markdownCheckbox').click(function(){
-markdownCheck();
+    markdownCheck();
 });
 
 $('#highlightCheckbox').click(function(){
-highlightCheck();
+    highlightCheck();
 })
 
 function markdownCheck()
