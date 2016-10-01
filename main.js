@@ -37,7 +37,13 @@ $('#decryptButton').click(function(){
 	{
 		return false;
 	}
-	decrypted = CryptoJS.AES.decrypt(window.pasteDecryptBuffer.toString(), password);
+    if ($('#markdownCheckbox').is(':checked')) {
+        decrypted = CryptoJS.AES.decrypt($('#pasteOutput').data().orig.replace('-----begin encrypted paste-----', ''), password);
+    }
+    else
+    {
+	   decrypted = CryptoJS.AES.decrypt(window.pasteDecryptBuffer.toString(), password);
+    }
 	decrypted = decrypted.toString(CryptoJS.enc.Utf8);
 	console.log(decrypted);
 	if (decrypted == '')
@@ -48,6 +54,10 @@ $('#decryptButton').click(function(){
 	else
 	{
 		$('#pasteOutput').html(decrypted);
+        $('#decryptArea').css('display', 'none');
+         if ($('#markdownCheckbox').is(':checked')) {
+        markdownCheck();
+        }
 	}
 
 });
@@ -308,18 +318,26 @@ function updateProgress()
 }
 
 $('#markdownCheckbox').click(function(){
-	if ($(this).is(':checked')) {
+markdownCheck();
+});
+
+function markdownCheck()
+{
+ if ($('#markdownCheckbox').is(':checked')) {
         var data = $('#pasteOutput').html();
         $('#pasteOutput').css('white-space', 'normal');
         $('#pasteOutput').data('orig', data);
-        $('#pasteOutput').html(markdown.toHTML(data));
+        var markdownResult = markdown.toHTML(data);
+        $('#pasteOutput').html(markdownResult);
+        detectEncrypted(markdownResult);
   } 
   else {
     var orig = $('#pasteOutput').data().orig;
     $('#pasteOutput').html(orig);
     $('#pasteOutput').css('white-space', 'pre');
+    detectEncrypted(orig);
   }
-});
+}
 
 $('#downloadOpen').click(function(){
     // Make sure download paste button is showing
@@ -345,8 +363,6 @@ $('#download').click(function(){
 		// Hide the download spinner
 		$('#downloadSpinner').addClass('hidden');
 
-		// Unhide the 'parse markdown' toggle
-		$('#markdownToggleContainer').removeAttr('hidden');
 
 	  // Torrents can contain many files. Let's use the first.
 	  file = torrent.files[0];
@@ -355,16 +371,11 @@ $('#download').click(function(){
 		  if (err) throw err
 		  showPaste(torrent);
           $('#downloadModal').modal('hide');
+          $('#downloadURI').val('');
 	  });
 
 	  downloadsRefresh();
 	});
-});
-
-$('#downloadOutput').bind("DOMSubtreeModified",function(){
-	var txt = $('#downloadOutput').val();
-	txt = txt.replace(/[\uFFFD]/g, '');
-	$('#downloadOutput').val(txt);
 });
 
 $('form').on('submit', function(){
