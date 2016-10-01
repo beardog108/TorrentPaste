@@ -397,6 +397,7 @@ if(window.location.hash) {
 	  file.getBuffer(function (err, buffer) {
 		  if (err) throw err
 		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+          $('#downloadSpinner').addClass('hidden');
 	  });
 	});
 }
