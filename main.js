@@ -1,4 +1,11 @@
 /* Copyright (c) 2016, Kevin Froman (https://ChaosWebs.net) & Andrew Morgan (https://amorgan.xyz). MIT License */
+
+// Detect if webrtc is not supported
+if (WebTorrent.WEBRTC_SUPPORT == false)
+{
+    $('#webrtcError').css('display', 'block');
+}
+
 // Broken, replace
 var torrentOffset = 0;
 
