@@ -92,3 +92,21 @@ border: 0;
 {
     color: dodgerblue;
 }
+
+#noscriptError, #webrtcError
+{
+	z-index: 9999;
+	height: 100%;
+	width: 100%;
+	color: red;
+	padding-top: 2em;
+	padding-left: 15%;
+	font-size: 2em;
+	background-color: black;
+	position: fixed;
+}
+
+#webrtcError
+{
+	display: none;
+}
