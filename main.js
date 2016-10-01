@@ -173,15 +173,15 @@ function downloadsRefresh(){
 		while (torrent = client.torrents[count]) {
             var progress = '<b class="torrentProgress" id="' + torrent.magnetURI + '">0%</b>';
             var name = torrent.files[0].name;
-            var peers = '<b id="peers">P: </b><span id="peers-text">' + torrent.numPeers + '</span>';
-            var ratio = '<b id="ratio">R: </b><span id="ratio-text">' + torrent.ratio.toFixed(2) + '</span>';
+            var peers = '<b id="peers">Peers: </b><span id="peers-text">' + torrent.numPeers + '</span>';
+            //var ratio = '<b id="ratio">R: </b><span id="ratio-text">' + torrent.ratio.toFixed(2) + '</span>';
             html += `
 <li class="list-group-item">
     <div class="row">
         <div class="col-xs-6 truncated-text">` + progress + `   ` + name + 
             `<div id="stats" class="row">
                 <div class="col-xs-1">` + peers + `</div>
-                <div class="col-xs-1">` + ratio + `</div>
+                <div class="col-xs-1">` + /*ratio + */ `</div>
             </div>
         </div>
         <div class="col-xs-6"><span class="pull-right">
