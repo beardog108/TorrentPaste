@@ -219,21 +219,7 @@ function downloadsRefresh(){
             var torrent = client.torrents[id];
             switch(classesList[1]) {
                 case 'fa-eye':
-                    file = torrent.files[0];
-                    
-                    file.getBuffer(function (err, buffer) {
-                        if (err) throw err
-                        $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
-                    });
-
-                    $('#downloadModal').modal();
-                    
-                    // Hide the download UI elements
-                    $('#download').hide();
-                    $('#downloadURILabel').hide();
-                    $('#markdownToggleContainer').show();
-                    $('#torrentFileName').text(file.name);
-
+                    showPaste(torrent);
                     break;
                 case 'fa-link':
                     var clipboard = new Clipboard('.btn-group button');
@@ -291,6 +277,24 @@ function downloadsRefresh(){
             }
         });
 	}, 1000);
+}
+
+function showPaste(torrent)
+{
+    file = torrent.files[0];
+        
+    file.getBuffer(function (err, buffer) {
+        if (err) throw err
+        $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
+    });
+
+    $('#downloadModal').modal();
+    
+    // Hide the download UI elements
+    $('#download').hide();
+    $('#downloadURILabel').hide();
+    $('#markdownToggleContainer').show();
+    $('#torrentFileName').text(file.name);
 }
 
 function updateProgress()
@@ -385,20 +389,15 @@ if(window.location.hash) {
     // Show download spinner
     $('#downloadSpinner').removeClass('hidden');
 
+    // Hide the download UI elements
+    $('#download').hide();
+    $('#downloadURILabel').hide();
+    $('#markdownToggleContainer').show();
+
 	client.add(uri, function (torrent) {
-	  // Torrents can contain many files. Let's use the first.
-	  file = torrent.files[0];
-
-      // Display title of torrent
-      $('#torrentFileName').text(file.name);
-
-	  // Display the file by adding it to the DOM.
-	  // Supports video, audio, image files, and more!
-	  file.getBuffer(function (err, buffer) {
-		  if (err) throw err
-		  $('#downloadOutput').html(markdown.toHTML(buffer.toString('utf8')));
-          $('#downloadSpinner').addClass('hidden');
-	  });
+        // Hide download spinner
+        $('#downloadSpinner').addClass('hidden');
+        showPaste(torrent);
 	});
 }
 
