@@ -110,3 +110,9 @@ border: 0;
 {
 	display: none;
 }
+
+.fa-copy
+{
+    /* Space out from the left */
+    padding-left:1em
+}

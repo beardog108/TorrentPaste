@@ -6,14 +6,12 @@ if (WebTorrent.WEBRTC_SUPPORT == false)
     $('#webrtcError').css('display', 'block');
 }
 
-// Broken, replace
-var torrentOffset = 0;
-
 var client = new WebTorrent();
 var file;
 var password;
 var plaintext;
 var text;
+var newTorrent;
 
 window.pasteDecryptBuffer = '';
 
@@ -106,7 +104,6 @@ $('#createPaste').click(function(){
 	  new Blob([text], {type: 'text/markdown'}),
 	];
 
-
 	// Construct a file
 	var fileName = $('#name').val();
     if (!fileName){fileName = "Unnamed";}
@@ -117,13 +114,18 @@ $('#createPaste').click(function(){
 	var fr = new FileReader();
 
 	fr.onload = function(evt){
-		//client.seed(URL.createObjectURL(file), [opts], [function onseed (torrent) {}])
-		  client.seed(file, function (torrent) {
+		client.seed(file, function (torrent) {
     		console.log('Client is seeding ' + torrent.magnetURI);
     		$('#uriOutput').val(torrent.magnetURI);
+            $('#uriOutput').attr('data-clipboard-action', 'copy');
+            $('#uriOutput').attr('data-clipboard-text', torrent.magnetURI);
+
     		$('#shareLink').val(document.location.href + '#' + torrent.infoHash);
+            $('#shareLink').attr('data-clipboard-action', 'copy');
+            $('#shareLink').attr('data-clipboard-text', document.location.href + '#' + torrent.infoHash);
+
     		$('#ready').modal();
- 		 })
+ 		});
 	}
 
 	fr.readAsText(file);
@@ -135,6 +137,16 @@ $('#createPaste').click(function(){
     $('#downloadsPanel').css('display', 'block');
 
 	return false;
+});
+
+$('#createMagnetCopy').click(function() {
+    var clipboard = new Clipboard('#uriOutput');
+    $.bootstrapGrowl("Magnet URI copied to clipboard!", {type: 'success'});
+});
+
+$('#createShareCopy').click(function() {
+    var clipboard = new Clipboard('#shareLink');
+    $.bootstrapGrowl("Share link copied to clipboard!", {type: 'success'});
 });
 
 $('#refreshButton').click(function(){
@@ -207,11 +219,9 @@ function downloadsRefresh(){
             // Find out which button was pressed
             var classesList = $(this).find('i').attr('class').split(/\s+/);
             var id = $(this).parent().attr('id');
-            var torrent = client.torrents[id - torrentOffset];
+            var torrent = client.torrents[id];
             switch(classesList[1]) {
                 case 'fa-eye':
-                    //$('#uriOutput').val(torrent.magnetURI);
-                    //$('#shareLink').val(document.location.href + '#' + torrent.infoHash);
                     file = torrent.files[0];
                     
                     file.getBuffer(function (err, buffer) {
