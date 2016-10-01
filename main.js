@@ -297,8 +297,6 @@ function showPaste(torrent)
     });
 
     $('#showModal').modal();
-
-
 }
 
 function updateProgress()
@@ -321,9 +319,14 @@ $('#markdownCheckbox').click(function(){
 markdownCheck();
 });
 
+$('#highlightCheckbox').click(function(){
+highlightCheck();
+})
+
 function markdownCheck()
 {
  if ($('#markdownCheckbox').is(':checked')) {
+        if ($('#highlightCheckbox').is(':checked')) { $('#highlightCheckbox').click();  }
         var data = $('#pasteOutput').html();
         $('#pasteOutput').css('white-space', 'normal');
         $('#pasteOutput').data('orig', data);
@@ -338,6 +341,29 @@ function markdownCheck()
     detectEncrypted(orig);
   }
 }
+
+function highlightCheck()
+{
+    /*          $('#pasteOutput').each(function(i, block) {
+            hljs.highlightBlock(block);
+          });*/
+ if ($('#highlightCheckbox').is(':checked')) {
+    if ($('#markdownCheckbox').is(':checked')) { $('#markdownCheckbox').click();  }
+        var data = $('#pasteOutput').html();
+        //$('#pasteOutput').css('white-space', 'normal');
+        $('#pasteOutput').data('orig', data);
+    $('#pasteOutput').each(function(i, block) {
+            hljs.highlightBlock(block);
+    });
+  } 
+  else {
+    var orig = $('#pasteOutput').data().orig;
+    $('#pasteOutput').html(orig);
+    $('#pasteOutput').css('white-space', 'pre');
+    detectEncrypted(orig);
+  }
+}
+
 
 $('#downloadOpen').click(function(){
     // Make sure download paste button is showing
