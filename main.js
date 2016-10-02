@@ -301,7 +301,6 @@ function sanitize(content)
 
 function unSanitize(content)
 {
-    console.log(String(content).replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
     return String(content).replace(/&lt;/g, '<').replace(/&gt;/g, '>');
 }
 
