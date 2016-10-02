@@ -296,8 +296,15 @@ function downloadsRefresh(){
 
 function sanitize(content)
 {
-    return String(content).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return String(content).replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
+
+function unSanitize(content)
+{
+    console.log(String(content).replace(/&lt;/g, '<').replace(/&gt;/g, '>'));
+    return String(content).replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+
 
 function showPaste(torrent)
 {
@@ -341,7 +348,7 @@ function markdownCheck()
 {
  if ($('#markdownCheckbox').is(':checked')) {
         if ($('#highlightCheckbox').is(':checked')) { $('#highlightCheckbox').click();  }
-        var data = $('#pasteOutput').html();
+        var data = unSanitize($('#pasteOutput').html());
         $('#pasteOutput').css('white-space', 'normal');
         $('#pasteOutput').data('orig', data);
         var markdownResult = markdown.toHTML(data);
@@ -349,7 +356,7 @@ function markdownCheck()
         detectEncrypted(markdownResult);
   } 
   else {
-    var orig = $('#pasteOutput').data().orig;
+    var orig = sanitize($('#pasteOutput').data().orig);
     $('#pasteOutput').html(orig);
     $('#pasteOutput').css('white-space', 'pre');
     detectEncrypted(orig);
