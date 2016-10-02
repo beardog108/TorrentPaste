@@ -449,3 +449,8 @@ if(window.location.hash) {
 setInterval(function(){
     updateProgress();
 },1000);
+
+$('#clearForm').click(function(){
+    $("#name").val("");
+    $("#text").val("");
+});
