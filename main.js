@@ -53,7 +53,7 @@ $('#decryptButton').click(function(){
 	}
 	else
 	{
-		$('#pasteOutput').html(decrypted);
+		$('#pasteOutput').html(sanitize(decrypted));
         $('#decryptArea').css('display', 'none');
          if ($('#markdownCheckbox').is(':checked')) {
         markdownCheck();
@@ -294,13 +294,19 @@ function downloadsRefresh(){
 	}, 1000);
 }
 
+function sanitize(content)
+{
+    return String(content).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
 function showPaste(torrent)
 {
     file = torrent.files[0];
         
     file.getBuffer(function (err, buffer) {
         if (err) throw err
-        $('#pasteOutput').html(buffer.toString('utf8'));
+        buffer = sanitize(buffer.toString('utf8'));
+        $('#pasteOutput').html(buffer);
         detectEncrypted(buffer.toString('utf8'));
     });
 
