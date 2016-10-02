@@ -53,7 +53,7 @@ $('#decryptButton').click(function(){
 	}
 	else
 	{
-		$('#pasteOutput').html(decrypted);
+		$('#pasteOutput').html(sanitize(decrypted));
         $('#decryptArea').css('display', 'none');
          if ($('#markdownCheckbox').is(':checked')) {
         markdownCheck();
@@ -294,13 +294,25 @@ function downloadsRefresh(){
 	}, 1000);
 }
 
+function sanitize(content)
+{
+    return String(content).replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function unSanitize(content)
+{
+    return String(content).replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+}
+
+
 function showPaste(torrent)
 {
     file = torrent.files[0];
         
     file.getBuffer(function (err, buffer) {
         if (err) throw err
-        $('#pasteOutput').html(buffer.toString('utf8'));
+        buffer = sanitize(buffer.toString('utf8'));
+        $('#pasteOutput').html(buffer);
         detectEncrypted(buffer.toString('utf8'));
     });
 
@@ -335,7 +347,7 @@ function markdownCheck()
 {
  if ($('#markdownCheckbox').is(':checked')) {
         if ($('#highlightCheckbox').is(':checked')) { $('#highlightCheckbox').click();  }
-        var data = $('#pasteOutput').html();
+        var data = unSanitize($('#pasteOutput').html());
         $('#pasteOutput').css('white-space', 'normal');
         $('#pasteOutput').data('orig', data);
         var markdownResult = markdown.toHTML(data);
@@ -343,7 +355,7 @@ function markdownCheck()
         detectEncrypted(markdownResult);
   } 
   else {
-    var orig = $('#pasteOutput').data().orig;
+    var orig = sanitize($('#pasteOutput').data().orig);
     $('#pasteOutput').html(orig);
     $('#pasteOutput').css('white-space', 'pre');
     detectEncrypted(orig);
