@@ -128,6 +128,10 @@ $('#createPaste').click(function(){
             $('#shareLink').val(document.location.href + '#' + torrent.infoHash);
 
     		$('#ready').modal();
+
+            $('#text').val(`# Title Here
+-------------------------------`);
+            $('#name').val('');
  		});
 	}
 
