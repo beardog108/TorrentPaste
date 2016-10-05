@@ -198,7 +198,7 @@ function downloadsRefresh(){
         </div>
         <div class="col-xs-6"><span class="pull-right">
             <div id="` + count  + `" class="btn-group" role="group" aria-label="">
-                <button type="button" class="btn btn-sm btn-default">
+                <button type="button" class="btn btn-sm btn-primary">
                   <i class="fa fa-eye" aria-hidden="true"></i>
                 </button>
                 <button type="button" class="btn btn-sm btn-default" data-clipboard-action="copy" data-clipboard-text="` + document.location.href + '#' + torrent.infoHash + `">
@@ -438,20 +438,47 @@ $('form').on('submit', function(){
 	return false;
 });
 
+function showModalSpinner(state)
+{
+    if (state)
+    {
+        $('#showModalMain').css('display', 'none');
+        $('#showModalSpinner').css('display', 'block');
+    }
+    else
+    {
+        $('#showModalMain').css('display', 'block');
+        $('#showModalSpinner').css('display', 'none');
+    }
+}
+
 if(window.location.hash) {
-    // Unhide downloadsPanel
-    $('#downloadsPanel').css('display', 'block');
     var windowHash = window.location.hash.replace('#', '');
 	$.bootstrapGrowl("Your paste is now downloading.", {type: 'success'});
 
 	var uri = 'magnet:?xt=urn:btih:' + windowHash + '&dn=paste.txt&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.webtorrent.io';
-    // Show download spinner
-    $('#downloadSpinner').removeClass('hidden');    
+
+    $('#showModal').modal();
+    showModalSpinner(true);
 
 	client.add(uri, function (torrent) {
         // Hide download spinner
         $('#downloadSpinner').addClass('hidden');
         downloadsRefresh();
+
+      file = torrent.files[0];
+      file.getBuffer(function (err, buffer) {
+          if (err) throw err
+          showPaste(torrent);
+          showModalSpinner(false);
+          $('#downloadModal').modal('hide');
+          $('#downloadURI').val('');
+          $.bootstrapGrowl("Download finished", {type: 'success'});
+          // Unhide downloadsPanel
+          $('#downloadsPanel').css('display', 'block');
+          // Show download spinner
+          $('#downloadSpinner').removeClass('hidden');
+      });
 	});
 }
 
