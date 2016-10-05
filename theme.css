@@ -126,3 +126,9 @@ footer
 {
 	margin-bottom: 1em;
 }
+
+#showModalSpinner
+{
+	display: none;
+	text-align: center;
+}
