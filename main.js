@@ -62,9 +62,9 @@ $('#decryptButton').click(function(){
 
 });
 
-$('#encryptBox').change(function() 
+$('#encryptBox').change(function()
 {
-	if($(this).is(':checked')) 
+	if($(this).is(':checked'))
 	{
 		// Show unencrypted title disclaimer if the user hasn't seen it
 		if (localStorage['titleDisclaimer'] == undefined)
@@ -132,6 +132,7 @@ $('#createPaste').click(function(){
             $('#text').val(`# Title Here
 -------------------------------`);
             $('#name').val('');
+        storeOffline(torrent.infoHash, fileName, text);
  		});
 	}
 
@@ -154,10 +155,10 @@ $('#createMagnetCopy').click(function() {
 
 $('.modal-footer button').click(function() {
     // Uncheck all checkboxes on modal close
-    if ($('#highlightCheckbox').is(':checked')) 
-        $('#highlightCheckbox').click();  
-    if ($('#markdownCheckbox').is(':checked')) 
-        $('#markdownCheckbox').click();  
+    if ($('#highlightCheckbox').is(':checked'))
+        $('#highlightCheckbox').click();
+    if ($('#markdownCheckbox').is(':checked'))
+        $('#markdownCheckbox').click();
 });
 
 $('#createShareCopy').click(function() {
@@ -190,7 +191,7 @@ function downloadsRefresh(){
             html += `
 <li class="list-group-item">
     <div class="row">
-        <div class="col-xs-6 truncated-text">` + progress + `   ` + name + 
+        <div class="col-xs-6 truncated-text">` + progress + `   ` + name +
             `<div id="stats" class="row">
                 <div class="col-xs-1">` + peers + `</div>
                 <div class="col-xs-1">` + /*ratio + */ `</div>
@@ -312,7 +313,7 @@ function unSanitize(content)
 function showPaste(torrent)
 {
     file = torrent.files[0];
-        
+
     file.getBuffer(function (err, buffer) {
         if (err) throw err
         buffer = sanitize(buffer.toString('utf8'));
@@ -357,7 +358,7 @@ function markdownCheck()
         var markdownResult = markdown.toHTML(data);
         $('#pasteOutput').html(markdownResult);
         detectEncrypted(markdownResult);
-  } 
+  }
   else {
     var orig = sanitize($('#pasteOutput').data().orig);
     $('#pasteOutput').html(orig);
@@ -379,7 +380,7 @@ function highlightCheck()
     $('#pasteOutput').each(function(i, block) {
             hljs.highlightBlock(block);
     });
-  } 
+  }
   else {
     var orig = $('#pasteOutput').data().orig;
     $('#pasteOutput').html(orig);
@@ -428,6 +429,7 @@ $('#download').click(function(){
 		  showPaste(torrent);
           $('#downloadModal').modal('hide');
           $('#downloadURI').val('');
+          storeOffline(torrent.infoHash, file.name, buffer);
 	  });
 
 	  downloadsRefresh();
@@ -478,6 +480,7 @@ if(window.location.hash) {
           $('#downloadsPanel').css('display', 'block');
           // Show download spinner
           $('#downloadSpinner').removeClass('hidden');
+          storeOffline(torrent.infoHash, file.name, buffer);
       });
 	});
 }
