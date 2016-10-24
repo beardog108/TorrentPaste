@@ -11,7 +11,7 @@ function storeOffline(infoHash, title, content)
     localStorage.setItem('fullTest', '9999999');
   } catch(e) {
     if (e.code == 22) {
-      $.bootstrapGrowl("Storage capacity for saving torrents is full.", {type: 'danger'});
+      $.bootstrapGrowl("Storage capacity for saving torrents offline is full.", {type: 'danger'});
       return;
     }
   }
