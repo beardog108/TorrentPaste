@@ -112,8 +112,7 @@ $('#createPaste').click(function(){
 	];
 
 	// Construct a file
-	var fileName = $('#name').val();
-    if (!fileName){fileName = "Unnamed";}
+	var fileName = 'paste.md';
 	file = new File(parts, fileName, {
 	    type: "text/markdown"
 	});
@@ -140,9 +139,6 @@ $('#createPaste').click(function(){
 
 	// Refresh downloads container
 	downloadsRefresh();
-
-    // Unhide downloadsPanel
-    $('#downloadsPanel').css('display', 'block');
 
 	return false;
 });
@@ -174,6 +170,7 @@ $('#refreshButton').click(function(){
 });
 
 function downloadsRefresh(){
+  $('#downloadsPanel').css('display', 'block');
 	// Allow client object time to update torrent list
 	setTimeout(function(){
 		// Stop spinning refresh
@@ -214,7 +211,7 @@ function downloadsRefresh(){
                 <button type="button" class="btn btn-sm btn-danger">
                   <i class="fa fa-pause-circle" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-default">
+                <button type="button" class="btn btn-sm btn-default removeTorrent" data-infoHash="` + torrent.infoHash + `">
                   <i class="fa fa-close" aria-hidden="true"></i>
                 </button>
             </div>
@@ -408,9 +405,6 @@ $('#download').click(function(){
         return false;
     }
 
-    // Unhide downloadsPanel
-    $('#downloadsPanel').css('display', 'block');
-
 	// Unhide the download spinner
 	$('#downloadSpinner').removeClass('hidden');
 
@@ -476,8 +470,6 @@ if(window.location.hash) {
           $('#downloadModal').modal('hide');
           $('#downloadURI').val('');
           $.bootstrapGrowl("Download finished", {type: 'success'});
-          // Unhide downloadsPanel
-          $('#downloadsPanel').css('display', 'block');
           // Show download spinner
           $('#downloadSpinner').removeClass('hidden');
           storeOffline(torrent.infoHash, file.name, buffer);
@@ -489,3 +481,33 @@ if(window.location.hash) {
 setInterval(function(){
     updateProgress();
 },1000);
+
+function removeTorrent(hash)
+{
+  var hash = 'magnet:?xt=urn:btih:' + hash + '&dn=paste.md&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com';
+  console.log('Recieved command to remove ' + hash);
+  client.remove(hash);
+  localStorage.removeItem(hash);
+}
+
+$(document).on('click', '.removeTorrent', '.btn', function(event){
+    if (event.target.nodeName == 'INPUT')
+    {
+      $(event.target).select();
+      return;
+    }
+    var hash = event.target.getAttribute('data-infoHash');
+
+    removeTorrent(hash);
+    event.target.parentNode.remove();
+});
+
+window.onload = function(){
+// Load torrents locally
+for (var magnet in localStorage){
+  if (magnet.startsWith('magnet:?xt=urn:')){
+    loadLocal(magnet);
+  }
+}
+downloadsRefresh();
+}
