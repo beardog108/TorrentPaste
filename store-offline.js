@@ -1,11 +1,9 @@
 function storeOffline(infoHash, title, content)
 {
-  if (window.localStorage == undefined)
-  {
-    $.bootstrapGrowl("Your browser does not support permanently saving torrents", {type: 'danger'});
+  // Check if localStorage is full
+  if (window.localStorage == undefined) {
     return;
   }
-  // Check if localStorage is full
 
   try {
     localStorage.setItem('fullTest', '9999999');
@@ -31,4 +29,30 @@ function storeOffline(infoHash, title, content)
   data[infoHash] = paste;
   localStorage['data'] = JSON.stringify(data);
   console.log(data);
+}
+
+function loadData() {
+
+  var x;
+
+  if (window.localStorage == undefined) {
+    $.bootstrapGrowl("Your browser does not support permanently saving torrents", {type: 'danger'});
+    return;
+  }
+
+  var data = localStorage['data'];
+  if (data == undefined || data == '')
+  {
+    console.log('data is empty or undef');
+    return;
+  }
+  else
+  {
+    data = JSON.parse(localStorage['data']);
+  }
+
+  for (x in data){
+    console.log('torrent' + x);
+  }
+
 }
