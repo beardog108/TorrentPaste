@@ -1,9 +1,14 @@
 function storeOffline(mag, title, content)
 {
-  // Check if localStorage is full
   if (window.localStorage == undefined) {
     return;
   }
+
+  if (localStorage[mag] != undefined){
+    return;
+  }
+
+  // Check if localStorage is full
 
   try {
     localStorage.setItem('fullTest', '9999999');

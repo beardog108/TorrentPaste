@@ -113,7 +113,7 @@ $('#createPaste').click(function(){
 
 	// Construct a file
 	var fileName = $('#name').val();
-  if (fileName == '') { fileName = 'paste'; }
+  if (fileName == '') { fileName = 'untitled-paste'; }
 	file = new File(parts, fileName, {
 	    type: "text/markdown"
 	});
@@ -180,7 +180,7 @@ function downloadsRefresh(){
 		// List active torrents
 		var count = 0;
 		var torrent;
-        var html = "";
+    var html = "";
 		while (torrent = client.torrents[count]) {
             var progress = '<b class="torrentProgress" id="' + torrent.magnetURI + '">0%</b>';
             var name = torrent.files[0].name;
