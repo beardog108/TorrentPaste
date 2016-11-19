@@ -1,6 +1,5 @@
-function storeOffline(infoHash, title, content)
+function storeOffline(mag, title, content)
 {
-  var uri = 'magnet:?xt=urn:btih:' + infoHash + '&dn=paste.md&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com';
   // Check if localStorage is full
   if (window.localStorage == undefined) {
     return;
@@ -15,10 +14,12 @@ function storeOffline(infoHash, title, content)
     }
   }
   localStorage.removeItem('fullTest');
-  localStorage[uri] = text;
+  localStorage[mag] = text;
 }
 
 function loadLocal(hash) {
+
+  var fileName = hash.split("&dn=")[1].split("&")[0]; /* Thanks @Arinerron */
 
   var text = localStorage[hash];
 
@@ -32,15 +33,12 @@ function loadLocal(hash) {
   ];
 
   // Construct a file
-  var fileName = 'paste.md';
-  var tName;
 
   file = new File(parts, fileName, {
       type: "text/markdown"
   });
 
   client.seed(file, function (torrent) {
-    tName = torrent.files[0].name;
     console.log('client is seeding ' + torrent.magnetURI);
   });
 

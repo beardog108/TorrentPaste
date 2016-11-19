@@ -112,7 +112,8 @@ $('#createPaste').click(function(){
 	];
 
 	// Construct a file
-	var fileName = 'paste.md';
+	var fileName = $('#name').val();
+  if (fileName == '') { fileName = 'paste'; }
 	file = new File(parts, fileName, {
 	    type: "text/markdown"
 	});
@@ -131,7 +132,7 @@ $('#createPaste').click(function(){
             $('#text').val(`# Title Here
 -------------------------------`);
             $('#name').val('');
-        storeOffline(torrent.infoHash, fileName, text);
+        storeOffline(torrent.magnetURI, fileName, text);
  		});
 	}
 
@@ -211,7 +212,7 @@ function downloadsRefresh(){
                 <button type="button" class="btn btn-sm btn-danger">
                   <i class="fa fa-pause-circle" aria-hidden="true"></i>
                 </button>
-                <button type="button" class="btn btn-sm btn-default removeTorrent" data-infoHash="` + torrent.infoHash + `">
+                <button type="button" class="btn btn-sm btn-default removeTorrent" data-magnet="` + torrent.magnetURI + `">
                   <i class="fa fa-close" aria-hidden="true"></i>
                 </button>
             </div>
@@ -423,7 +424,7 @@ $('#download').click(function(){
 		  showPaste(torrent);
           $('#downloadModal').modal('hide');
           $('#downloadURI').val('');
-          storeOffline(torrent.infoHash, file.name, buffer);
+          storeOffline(torrent.magnetURI, file.name, buffer);
 	  });
 
 	  downloadsRefresh();
@@ -472,7 +473,7 @@ if(window.location.hash) {
           $.bootstrapGrowl("Download finished", {type: 'success'});
           // Show download spinner
           $('#downloadSpinner').removeClass('hidden');
-          storeOffline(torrent.infoHash, file.name, buffer);
+          storeOffline(torrent.magnetURI, file.name, buffer);
       });
 	});
 }
@@ -484,20 +485,21 @@ setInterval(function(){
 
 function removeTorrent(hash)
 {
-  var hash = 'magnet:?xt=urn:btih:' + hash + '&dn=paste.md&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com';
   console.log('Recieved command to remove ' + hash);
-  client.remove(hash);
   localStorage.removeItem(hash);
+  client.remove(hash);
+
 }
 
 $(document).on('click', '.removeTorrent', '.btn', function(event){
+    console.log(event.target.nodeName);
     if (event.target.nodeName == 'INPUT')
     {
       $(event.target).select();
       return;
     }
-    var hash = event.target.getAttribute('data-infoHash');
-
+    var hash = event.target.getAttribute('data-magnet');
+    console.log('event.target hash is ' + hash);
     removeTorrent(hash);
     event.target.parentNode.remove();
 });
