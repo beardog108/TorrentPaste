@@ -451,31 +451,33 @@ function showModalSpinner(state)
 
 if(window.location.hash) {
     var windowHash = window.location.hash.replace('#', '');
-	$.bootstrapGrowl("Your paste is now downloading.", {type: 'success'});
 
 	var uri = 'magnet:?xt=urn:btih:' + windowHash + '&dn=paste.txt&tr=udp%3A%2F%2Fexodus.desync.com%3A6969&tr=udp%3A%2F%2Ftracker.coppersurfer.tk%3A6969&tr=udp%3A%2F%2Ftracker.internetwarriors.net%3A1337&tr=udp%3A%2F%2Ftracker.leechers-paradise.org%3A6969&tr=udp%3A%2F%2Ftracker.openbittorrent.com%3A80&tr=wss%3A%2F%2Ftracker.btorrent.xyz&tr=wss%3A%2F%2Ftracker.fastcast.nz&tr=wss%3A%2F%2Ftracker.openwebtorrent.com&tr=wss%3A%2F%2Ftracker.webtorrent.io';
 
+
+  	$.bootstrapGrowl("Your paste is now downloading.", {type: 'success'});
     $('#showModal').modal();
     showModalSpinner(true);
+    if (localStorage[uri] == undefined){
+    	client.add(uri, function (torrent) {
+            // Hide download spinner
+            $('#downloadSpinner').addClass('hidden');
+            downloadsRefresh();
 
-	client.add(uri, function (torrent) {
-        // Hide download spinner
-        $('#downloadSpinner').addClass('hidden');
-        downloadsRefresh();
-
-      file = torrent.files[0];
-      file.getBuffer(function (err, buffer) {
-          if (err) throw err
-          showPaste(torrent);
-          showModalSpinner(false);
-          $('#downloadModal').modal('hide');
-          $('#downloadURI').val('');
-          $.bootstrapGrowl("Download finished", {type: 'success'});
-          // Show download spinner
-          $('#downloadSpinner').removeClass('hidden');
-          storeOffline(torrent.magnetURI, file.name, buffer);
-      });
-	});
+          file = torrent.files[0];
+          file.getBuffer(function (err, buffer) {
+              if (err) throw err
+              showPaste(torrent);
+              showModalSpinner(false);
+              $('#downloadModal').modal('hide');
+              $('#downloadURI').val('');
+              $.bootstrapGrowl("Download finished", {type: 'success'});
+              // Show download spinner
+              $('#downloadSpinner').removeClass('hidden');
+              storeOffline(torrent.magnetURI, file.name, buffer);
+          });
+    	});
+  }
 }
 
 // Update torrent progress every second
