@@ -19,7 +19,7 @@ function storeOffline(mag, title, content)
 
 function loadLocal(hash) {
 
-  var fileName = hash.split("&dn=")[1].split("&")[0]; /* Thanks @Arinerron */
+  var fileName = hash.split("&dn=")[1].split("&")[0]; /* Thanks @Arinerron for this line */
 
   var text = localStorage[hash];
 
